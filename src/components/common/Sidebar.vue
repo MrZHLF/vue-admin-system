@@ -31,6 +31,18 @@
                     <el-menu-item index="upload">文件上传</el-menu-item>
                 </el-menu-item-group>
             </el-submenu>
+						<el-submenu index="5">
+								<template slot="title">
+										<i class="el-icon-date"></i>
+										<span slot="title">数据管理</span>
+								</template>
+										<el-menu-item-group>
+										<el-menu-item index="5-1">用户列表</el-menu-item>
+										<el-menu-item index="5-2">商家列表</el-menu-item>
+										<el-menu-item index="5-3">食品列表</el-menu-item>
+										<el-menu-item index="5-4">订单列表</el-menu-item>
+								</el-menu-item-group>
+						</el-submenu>
             <el-menu-item index="charts">
                 <i class="el-icon-star-on"></i>
                 <span slot="title">schart图表</span>

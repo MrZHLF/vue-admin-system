@@ -9,6 +9,7 @@
         <div class="cantainer">
           <div class="handle-box">
             <el-button type="primary" @click="dialogFormVisible = true" class="handle-del mr10">添加</el-button>
+						<el-input class="search-input" placeholder="筛选关键词" size="small" v-model="ListSearch"></el-input>
           </div>
           <el-table
           height="400"
@@ -20,23 +21,28 @@
             <el-table-column
               label="日期"
               width="120"
+							sortable
               prop="date">
               <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
             </el-table-column>
             <el-table-column
               prop="name"
               label="姓名"
+							sortable
               width="120">
             </el-table-column>
             <el-table-column
               prop="address"
               label="地址"
+							sortable
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button
-                  size="mini">编辑</el-button>
+                  size="mini"
+									@click="handleEdit(scope.$index, scope.row)"
+									>编辑</el-button>
                 <el-button
                   size="mini"
                   type="danger"
@@ -46,6 +52,26 @@
           </el-table>
         </div>
       </div> 
+			
+			<!--编辑弹出框-->
+			<el-dialog title="编辑" :visible.sync="editFormVisible"  width="30%">
+				<el-form :model="editForm" label-width="50px" ref="addForm">
+					<el-form-item label="日期">
+						<el-date-picker type="date" placeholder="选择日期" v-model="editForm.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
+					</el-form-item>
+					<el-form-item label="姓名">
+						<el-input v-model="editForm.name"></el-input>
+					</el-form-item>
+					<el-form-item label="地址">
+						<el-input v-model="editForm.address"></el-input>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button @click="editFormVisible = false">取 消</el-button>
+					<el-button type="primary" @click="editSubmit">确 定</el-button>
+				</div>
+			</el-dialog>
+			
       <!-- 添加弹出框 -->
       <el-dialog title="信息添加" :visible.sync="dialogFormVisible" width="30%">
         <el-form :model="form" label-width="50px">
@@ -61,7 +87,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="add">确 定</el-button>
+          <el-button type="primary" @click="add"  :loading="addLoading">确 定</el-button>
         </div>
       </el-dialog>
   </div>
@@ -73,22 +99,68 @@ export default {
     return {
       list:[], //数据存储
       dialogFormVisible:false,   //添加弹出框
+			ListSearch:"",  //搜索
+			editFormVisible: false,  //编辑器弹出框
       form:{    //需要添加的字段
         name:"",
         date:"",
         address:""
-      }
+      },
+			editForm:{   //编辑需要的字段
+				name:"",
+				date:"",
+				address:""
+			},
+			addLoading:false
     }
   },
-  mounted() {
+  created() {
     this.vueTable()
   },
-  methods:{
-		vueTable() {
-			this.$http.get("https://wd6176291011jokkcy.wilddogio.com/vuetable.json").then(res => {
-				this.list = res.body
-				console.log(res)
+	watch:{
+		ListSearch(val) {
+			this.list.forEach(val => {
+				
 			})
+		}
+	},
+  methods:{
+		// 获取用户列表
+		vueTable() {
+			this.$http.get("https://wd6176291011jokkcy.wilddogio.com/vuetable.json").then(data => {
+				return data.json()
+			}).then(data =>{
+				let ListArray =[]
+				for (let key in data) {
+					data[key].id = key
+					ListArray.push(data[key])
+				}
+				this.list = ListArray
+			})
+		},
+		// 显示编辑弹出框
+		handleEdit(index, row){
+			this.editFormVisible = true;
+			this.editForm = Object.assign({}, row);
+			console.log(this.editForm)
+		},
+		// 编辑
+		editSubmit(row) {
+			if (!this.editForm.name || !this.editForm.address || !this.editForm.date) {
+				this.$messageerror('内容不能为空');
+			} else {
+				let HandleEdit = {
+					name: this.form.name,
+					address: this.form.address,
+					date: this.form.date
+				}
+				this.$http.post("https://wd6176291011jokkcy.wilddogio.com/vuetable.json",HandleEdit).then(res => {
+					this.editFormVisible = false
+					this.$message.success('添加成功');
+					this.vueTable()
+				})
+			}
+			
 		},
     // 删除
     deleteList(index,row) {
@@ -97,11 +169,14 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.list.splice(index,1)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+					this.$http.delete("https://wd6176291011jokkcy.wilddogio.com/vuetable/"+row.id+".json").then(res => {
+						this.list.splice(index,1)
+						this.vueTable()
+						this.$message({
+							type: 'success',
+							message: '删除成功!'
+						});
+					})
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -113,7 +188,6 @@ export default {
       add() {
         if (!this.form.name || !this.form.address || !this.form.date) {
           this.$message.error('内容不能为空');
-          return 
         } else {
 					let handleAddClick ={
 						name: this.form.name,
@@ -123,16 +197,24 @@ export default {
 					this.$http.post("https://wd6176291011jokkcy.wilddogio.com/vuetable.json",handleAddClick).then(res => {
 						this.dialogFormVisible = false;
 						this.$message.success('添加成功');
+						this.vueTable()
 					})
         }
       }
     }
-  }
+	}
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.el-table__body-wrapper {
-		overflow: auto;
+.search-input {
+	width: 200px;
+	margin-left: 50px;
+}
+.el-table__footer-wrapper, .el-table__header-wrapper{
+	overflow: hidden !important;
+}
+.el-table >>> .el-table__body-wrapper {
+		overflow: auto !important;
 }
 .crumbs{
   margin-bottom:20px;

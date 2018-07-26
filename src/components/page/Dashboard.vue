@@ -23,13 +23,13 @@
 									<span>语言详情</span>
 								</div>
 								Vue.js
-								<el-progress :percentage="70" ></el-progress>
+								<el-progress :percentage="60" ></el-progress>
 								JavaScript
-								<el-progress :percentage="80" color="#8e71c7"></el-progress>
+								<el-progress :percentage="50" color="#8e71c7"></el-progress>
 								CSS3
-								<el-progress :percentage="100" status="success"></el-progress>
+								<el-progress :percentage="60" color="#67c23a"></el-progress>
 								HTML5
-								<el-progress :percentage="50" status="exception"></el-progress>
+								<el-progress :percentage="70" color="#f56c6c"></el-progress>
               </el-card>
             </el-col>
           </el-row>
