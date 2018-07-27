@@ -53,6 +53,26 @@ export default new Router({
           component: resolve => require(['../components/page/formcorrelation/Upload.vue'], resolve),
           meta: { title: '文件上传' },
         },
+				{
+					path: '/userlist',
+					component: resolve => require(['../components/page/datalist/UserList.vue'], resolve),
+					meta: { title: '用户列表' },
+				},
+				{
+					path: '/shoplist',
+					component: resolve => require(['../components/page/datalist/ShopList.vue'], resolve),
+					meta: { title: '商家列表' },
+				},
+				{
+					path: '/foodlist',
+					component: resolve => require(['../components/page/datalist/FoodList.vue'], resolve),
+					meta: { title: '食品列表' },
+				},
+				{
+					path: '/orderlist',
+					component: resolve => require(['../components/page/datalist/OrderList.vue'], resolve),
+					meta: { title: '订单列表' },
+				},
         {
           path: '/charts',
           component: resolve => require(['../components/page/BaseCharts.vue'], resolve),

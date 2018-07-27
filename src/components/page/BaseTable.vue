@@ -12,8 +12,7 @@
 						<el-input class="search-input" placeholder="筛选关键词" size="small" v-model="ListSearch"></el-input>
           </div>
           <el-table
-          height="400"
-          :data="list"
+					:data="list.slice((currentPage-1)*pagesize,currentPage*pagesize)"
           tooltip-effect="dark"
           style="width: 100%"
           >
@@ -50,6 +49,15 @@
               </template>
             </el-table-column>
           </el-table>
+					<el-pagination
+						@size-change="handleSizeChange"
+						@current-change="handleCurrentChange"
+						:current-page="currentPage"
+						:page-sizes="[5, 10, 20, 40]"
+						:page-size="pagesize"
+						layout="total, sizes, prev, pager, next, jumper"
+						:total="list.length">
+				</el-pagination>
         </div>
       </div> 
 			
@@ -111,7 +119,9 @@ export default {
 				date:"",
 				address:""
 			},
-			addLoading:false
+			addLoading:false,
+			currentPage:1, //初始页
+      pagesize:5    //	每页的数据
     }
   },
   created() {
@@ -125,6 +135,15 @@ export default {
 		}
 	},
   methods:{
+		// 初始页currentPage、初始每页数据数pagesize和数据data
+		handleSizeChange: function (size) {
+        this.pagesize = size;
+				console.log(this.pagesize)
+    },
+    handleCurrentChange: function(currentPage){
+        this.currentPage = currentPage;
+				console.log(this.currentPage)
+    },
 		// 获取用户列表
 		vueTable() {
 			this.$http.get("https://wd6176291011jokkcy.wilddogio.com/vuetable.json").then(data => {
@@ -159,6 +178,7 @@ export default {
 					this.$message.success('添加成功');
 					this.vueTable()
 				})
+				console.log(HandleEdit)
 			}
 			
 		},
@@ -175,7 +195,7 @@ export default {
 						this.$message({
 							type: 'success',
 							message: '删除成功!'
-						});
+						})
 					})
         }).catch(() => {
           this.$message({
@@ -210,11 +230,8 @@ export default {
 	width: 200px;
 	margin-left: 50px;
 }
-.el-table__footer-wrapper, .el-table__header-wrapper{
-	overflow: hidden !important;
-}
-.el-table >>> .el-table__body-wrapper {
-		overflow: auto !important;
+.el-table__body-wrapper{
+	height: 500px;
 }
 .crumbs{
   margin-bottom:20px;

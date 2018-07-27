@@ -11,13 +11,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(VueResource);
 /* eslint-disable no-new */
-// 使用钩子函数对路由权限跳转
-/*  router.beforeEach((to, form, next) =>{
-  const role = localStorage.getItem('ms_username')
-  if(!role && to.path !== '/login') {
-    next('/login')
-  }
-})  */
+// 使用钩子函数对路由权限跳转 
 new Vue({
   el: '#app',
   router,

@@ -33,14 +33,14 @@
             </el-submenu>
 						<el-submenu index="5">
 								<template slot="title">
-										<i class="el-icon-date"></i>
+										<i class="el-icon-document"></i>
 										<span slot="title">数据管理</span>
 								</template>
 										<el-menu-item-group>
-										<el-menu-item index="5-1">用户列表</el-menu-item>
-										<el-menu-item index="5-2">商家列表</el-menu-item>
-										<el-menu-item index="5-3">食品列表</el-menu-item>
-										<el-menu-item index="5-4">订单列表</el-menu-item>
+										<el-menu-item index="userlist">用户列表</el-menu-item>
+										<el-menu-item index="shoplist">商家列表</el-menu-item>
+										<el-menu-item index="foodlist">食品列表</el-menu-item>
+										<el-menu-item index="orderlist">订单列表</el-menu-item>
 								</el-menu-item-group>
 						</el-submenu>
             <el-menu-item index="charts">
